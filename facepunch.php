@@ -8,14 +8,15 @@ include "../emplyee_dutylog/volunteers_duty.php";
 
 $token = $_GET['token'];
 $userID = $_GET['userID'];
-$dType = $_GET['dType'];
-$temp='';
+$dType = (!empty($_GET['dType']))? $_GET['dType']: '上班';
+$dateTime = (!empty($_GET['dateTime']))? $_GET['dateTime']: date("Y/m/d H:i:s");
+
+$temp=''; //識別身分
 date_default_timezone_set("Asia/Taipei");//設成台灣時間
-$result = array('severTime'=>date("Y/m/d H:i:s"), 'gap'=>0, 'msg'=>'刷卡失敗.!!', 'type'=>1);
+$result = array('severTime'=>$dateTime, 'gap'=>0,'ip' =>0, 'msg'=>'刷卡失敗!!', 'type'=>1 );
 queryData($token,$userID,$dType);
-//queryData($token,$empID,$act);
 function queryData($token,$userID,$dType){
-    global $temp;
+    global $temp,$result;
     $type = dbVID($userID); 
     if($temp == ''){
         $result['identy'] = '身分失敗'; 
@@ -23,11 +24,10 @@ function queryData($token,$userID,$dType){
         exit;
     }else{
         $result['identy'] = $temp; 
-        if(empty($dType)) $dType = '上班'; 
         $result['msg'] = dType_chk($dType);
         echo json_encode($result);
+        //echo dType_chk($dateTime);
     }
-    //echo json_encode($result);
 }
 
 function dbempID($userID){
